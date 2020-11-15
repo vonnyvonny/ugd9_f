@@ -199,9 +199,9 @@ public class TambahEditBuku extends Fragment {
                     Double harga     = Double.parseDouble(txtHarga.getText().toString());
                     buku = new Buku(namaBuku, pengarang, harga);
                     if(status.equals("tambah"))
-                        tambahBuku(buku);
+                        tambahBuku();
                     else
-                        editBuku(buku,idBuku);
+                        editBuku();
                 }
             }
         });
@@ -299,118 +299,11 @@ public class TambahEditBuku extends Fragment {
         return Bitmap.createScaledBitmap(image, width, height, true);
     }
 
-    private String imageToString(Bitmap bitmap){
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG,100, outputStream);
-        byte[] imageBytes = outputStream.toByteArray();
-
-        String encodeImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
-        return encodeImage;
+    public void tambahBuku(){
+        //Tambahkan tambah buku disini
     }
 
-    public void tambahBuku(final Buku buku){
-        RequestQueue queue = Volley.newRequestQueue(getContext());
-
-        final ProgressDialog progressDialog;
-        progressDialog = new ProgressDialog(getContext());
-        progressDialog.setMessage("loading....");
-        progressDialog.setTitle("Menambahkan data buku");
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        progressDialog.show();
-
-        StringRequest stringRequest = new StringRequest(POST, BukuAPI.URL_ADD, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                progressDialog.dismiss();
-                try {
-                    JSONObject obj = new JSONObject(response);
-                    if(obj.getString("status").equals("Success"))
-                    {
-                        loadFragment(new ViewsBuku());
-                    }
-
-                    Toast.makeText(getContext(), obj.getString("message"), Toast.LENGTH_SHORT).show();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                progressDialog.dismiss();
-                Toast.makeText(getContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        }){
-            @Override
-            protected Map<String, String> getParams()
-            {
-                Map<String, String>  params = new HashMap<String, String>();
-                params.put("namaBuku", buku.getNamaBuku());
-                params.put("pengarang", buku.getPengarang());
-                params.put("harga", String.valueOf(buku.getHarga()));
-
-                if(bitmap != null){
-                    String imageData = imageToString(bitmap);
-                    params.put("gambar", imageData);
-                }
-
-                return params;
-            }
-        };
-
-        queue.add(stringRequest);
-    }
-
-    public void editBuku(final Buku buku, int idBuku) {
-        RequestQueue queue = Volley.newRequestQueue(getContext());
-
-        final ProgressDialog progressDialog;
-        progressDialog = new ProgressDialog(getContext());
-        progressDialog.setMessage("loading....");
-        progressDialog.setTitle("Mengubah data buku");
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        progressDialog.show();
-
-        StringRequest stringRequest = new StringRequest(POST, BukuAPI.URL_UPDATE+idBuku, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                progressDialog.dismiss();
-                try {
-                    JSONObject obj = new JSONObject(response);
-                    if(obj.getString("status").equals("Success"))
-                    {
-                        loadFragment(new ViewsBuku());
-                    }
-
-                    Toast.makeText(getContext(), obj.getString("message"), Toast.LENGTH_SHORT).show();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                progressDialog.dismiss();
-                Toast.makeText(getContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        }){
-            @Override
-            protected Map<String, String> getParams()
-            {
-                Map<String, String>  params = new HashMap<String, String>();
-                params.put("namaBuku", buku.getNamaBuku());
-                params.put("pengarang", buku.getPengarang());
-                params.put("harga", String.valueOf(buku.getHarga()));
-
-                if(bitmap != null)
-                {
-                    String imageData = imageToString(bitmap);
-                    params.put("gambar", imageData);
-                }
-                return params;
-            }
-        };
-
-        queue.add(stringRequest);
+    public void editBuku() {
+        //Tambahkan edit buku disini
     }
 }

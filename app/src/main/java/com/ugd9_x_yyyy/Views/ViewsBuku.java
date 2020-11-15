@@ -49,9 +49,8 @@ public class ViewsBuku extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_views_buku, container, false);
-        setAdapter();
-        getBuku();
 
+        loadDaftarBuku();
         return view;
     }
 
@@ -107,64 +106,18 @@ public class ViewsBuku extends Fragment{
         return super.onOptionsItemSelected(item);
     }
 
+    public void loadDaftarBuku(){
+        setAdapter();
+        getBuku();
+    }
+
     public void setAdapter(){
         getActivity().setTitle("Data Buku");
-        listBuku = new ArrayList<Buku>();
-        recyclerView = view.findViewById(R.id.recycler_view);
-        adapter = new AdapterBuku(view.getContext(), listBuku);
-        GridLayoutManager gridLayoutManager;
-        int orientation = getResources().getConfiguration().orientation;
-        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            gridLayoutManager = new GridLayoutManager(view.getContext(),4);
-        } else {
-            gridLayoutManager = new GridLayoutManager(view.getContext(),2);
-        }
-        recyclerView.setLayoutManager(gridLayoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(adapter);
+        /*Buat tampilan untuk adapter jika potrait menampilkan 2 data dalam 1 baris,
+        sedangakan untuk landscape 4 data dalam 1 baris*/
     }
 
     public void getBuku() {
-        RequestQueue queue = Volley.newRequestQueue(view.getContext());
-
-        final JsonObjectRequest stringRequest = new JsonObjectRequest(GET, BukuAPI.URL_SELECT
-                , null, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                try {
-                    JSONArray jsonArray = response.getJSONArray("dataBuku");
-
-                    if(!listBuku.isEmpty())
-                        listBuku.clear();
-
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        //Mengubah data jsonArray tertentu menjadi json Object
-                        JSONObject jsonObject = (JSONObject) jsonArray.get(i);
-
-                        int idBuku          = Integer.parseInt(jsonObject.optString("idBuku"));
-                        String namaBuku     = jsonObject.optString("namaBuku");
-                        String pengarang    = jsonObject.optString("pengarang");
-                        Double harga        = Double.parseDouble(jsonObject.optString("harga"));
-                        String gambar       = jsonObject.optString("gambar");
-
-                        //Menambahkan objek buku ke listBuku
-                        listBuku.add(new Buku(idBuku, namaBuku, pengarang, harga, gambar));
-                    }
-                    adapter.notifyDataSetChanged();
-                }catch (JSONException e){
-                    e.printStackTrace();
-                }
-                Toast.makeText(view.getContext(), response.optString("message"),
-                        Toast.LENGTH_SHORT).show();
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(view.getContext(), error.getMessage(),
-                        Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        queue.add(stringRequest);
+        //Tambahkan tampil buku disini
     }
 }

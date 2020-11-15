@@ -51,11 +51,18 @@ public class AdapterBuku extends RecyclerView.Adapter<AdapterBuku.adapterBukuVie
     private List<Buku> bukuListFiltered;
     private Context context;
     private View view;
+    private AdapterBuku.deleteItemListener mListener;
 
-    public AdapterBuku(Context context, List<Buku> bukuList) {
+    public AdapterBuku(Context context, List<Buku> bukuList,
+                       AdapterBuku.deleteItemListener mListener) {
         this.context            = context;
         this.bukuList           = bukuList;
         this.bukuListFiltered   = bukuList;
+        this.mListener          = mListener;
+    }
+
+    public interface deleteItemListener {
+        void deleteItem( Boolean delete);
     }
 
     @NonNull
@@ -101,7 +108,7 @@ public class AdapterBuku extends RecyclerView.Adapter<AdapterBuku.adapterBukuVie
                 builder.setPositiveButton("Ya", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        deleteBuku(buku.getIdBuku());
+                        deleteBuku();
                     }
                 });
                 builder.setNegativeButton("Tidak", new DialogInterface.OnClickListener() {
@@ -176,37 +183,7 @@ public class AdapterBuku extends RecyclerView.Adapter<AdapterBuku.adapterBukuVie
                 .commit();
     }
 
-    public void deleteBuku(int idBuku){
-        RequestQueue queue = Volley.newRequestQueue(context);
-
-        final ProgressDialog progressDialog;
-        progressDialog = new ProgressDialog(context);
-        progressDialog.setMessage("loading....");
-        progressDialog.setTitle("Menghapus data buku");
-        progressDialog.setProgressStyle(android.app.ProgressDialog.STYLE_SPINNER);
-        progressDialog.show();
-        //Meminta
-        StringRequest stringRequest = new StringRequest(POST, BukuAPI.URL_DELETE+idBuku, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                progressDialog.dismiss();
-                try {
-                    JSONObject obj = new JSONObject(response);
-                    Toast.makeText(context, obj.getString("message"), Toast.LENGTH_SHORT).show();
-                    notifyDataSetChanged();
-                    loadFragment(new ViewsBuku());
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                progressDialog.dismiss();
-                Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        queue.add(stringRequest);
+    public void deleteBuku(){
+        //Tambahkan hapus buku disini
     }
 }
